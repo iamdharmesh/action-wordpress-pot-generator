@@ -1,0 +1,24 @@
+name: 'WordPress .pot File Generator'
+description: 'Generates .pot file for your WordPress plugin or theme repository'
+author: 'iamdharmesh'
+inputs:
+  destination_path:
+    description: 'Destination path to save generated .pot file'
+    default: './languages'
+    required: false
+  slug:
+    description: 'Plugin or theme slug. Defaults to the Github repository name.'
+    required: false
+  text_domain:
+    description: 'Text domain to look for in the source code. Defaults to the plugin or theme slug.'
+    required: false
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.destination_path }}
+    - ${{ inputs.slug }}
+    - ${{ inputs.text_domain }}
+branding:
+  icon: 'file-text'
+  color: 'blue'
