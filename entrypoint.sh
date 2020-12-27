@@ -37,7 +37,7 @@ if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
 	FORK=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.head.repo.fork)
 	MODIFY=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.maintainer_can_modify)
 	if [ "$FORK" == true ]; then
-		REMOTE=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.head.repo.clone_url)
+		REMOTE=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.head.repo.clone_url | cut -d "\"" -f 2)
 	else
 		REMOTE="origin"
 	fi
@@ -54,7 +54,7 @@ if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
 
 	# Checkout to PR branch
 	git fetch "$REMOTE" "$GITHUB_HEAD_REF:$GITHUB_HEAD_REF"
-	git config "branch.$GITHUB_HEAD_REF.remote" "$REMOVE"
+	git config "branch.$GITHUB_HEAD_REF.remote" "$REMOTE"
 	git config "branch.$GITHUB_HEAD_REF.merge" "refs/heads/$GITHUB_HEAD_REF"
 	git checkout "$GITHUB_HEAD_REF"
 fi
