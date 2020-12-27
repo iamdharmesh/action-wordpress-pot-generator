@@ -38,10 +38,10 @@ git config --global user.name "WordPress .pot File Generator"
 git config --global user.email "wpghactionbot@gmail.com"
 
 if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
-	FORK=$(cat "$GITHUB_EVENT_PATH" | jq .head.repo.fork)
-	MODIFY=$(cat "$GITHUB_EVENT_PATH" | jq .maintainer_can_modify)
+	FORK=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.head.repo.fork)
+	MODIFY=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.maintainer_can_modify)
 	if [ "$FORK" == true ]; then
-		REMOTE=$(cat "$GITHUB_EVENT_PATH" | jq .head.repo.clone_url)
+		REMOTE=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.head.repo.clone_url)
 	else
 		REMOTE="origin"
 	fi
@@ -50,8 +50,6 @@ if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
 		echo "🚫 PR can't be modified by maintainer"
 	fi
 
-	cat "$GITHUB_EVENT_PATH"
-	cat "$GITHUB_EVENT_PATH" | jq .head
 	echo "✔️ GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH"
 	echo "✔️ FORK: $FORK"
 	echo "✔️ MODIFY : $MODIFY"
