@@ -51,6 +51,8 @@ if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
 		echo "🚫 PR can't be modified by maintainer"
 	fi
 
+	cat "$GITHUB_EVENT_PATH"
+	echo "✔️ GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH"
 	echo "✔️ FORK: $FORK"
 	echo "✔️ MODIFY : $MODIFY"
 	echo "✔️ REMOTE: $REMOTE"
