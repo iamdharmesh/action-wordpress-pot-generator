@@ -29,10 +29,6 @@ if [ ! -d "$DESTINATION_PATH" ]; then
 	mkdir -p $DESTINATION_PATH
 fi
 
-# Generate POT file.
-echo "🔨 Generating POT file"
-wp i18n make-pot . "$POT_PATH" --domain="$TEXT_DOMAIN" --slug="$SLUG" --allow-root --color
-
 # Setup Git config and push .pot file to github repo
 git config --global user.name "WordPress .pot File Generator"
 git config --global user.email "wpghactionbot@gmail.com"
@@ -63,6 +59,11 @@ if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
 	git checkout "$GITHUB_HEAD_REF"
 fi
 
+# Generate POT file.
+echo "🔨 Generating POT file"
+wp i18n make-pot . "$POT_PATH" --domain="$TEXT_DOMAIN" --slug="$SLUG" --allow-root --color
+
+# Push file to repository.
 if [ "$(git status $POT_PATH --porcelain)" != "" ]; then
 	echo "🔼 Pushing to repository"
 	git add "$POT_PATH"
