@@ -33,10 +33,35 @@ fi
 echo "🔨 Generating POT file"
 wp i18n make-pot . "$POT_PATH" --domain="$TEXT_DOMAIN" --slug="$SLUG" --allow-root --color
 
-
 # Setup Git config and push .pot file to github repo
 git config --global user.name "WordPress .pot File Generator"
 git config --global user.email "wpghactionbot@gmail.com"
+
+if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+	apk add jq
+	FORK=$(cat "$GITHUB_EVENT_PATH" | jq .head.repo.fork)
+	MODIFY=$(cat "$GITHUB_EVENT_PATH" | jq .maintainer_can_modify)
+	if [ "$FORK" == true ]; then
+		REMOTE=$(cat "$GITHUB_EVENT_PATH" | jq .head.repo.clone_url)
+	else
+		REMOTE="origin"
+	fi
+
+	if [ "$FORK" == true ] && [ "$MODIFY" == false ]; then
+		echo "🚫 PR can't be modified by maintainer"
+	fi
+
+	echo "✔️ FORK: $FORK"
+	echo "✔️ MODIFY : $MODIFY"
+	echo "✔️ REMOTE: $REMOTE"
+	echo "✔️ BRANCH: $GITHUB_HEAD_REF"
+
+	# Checkout to PR branch
+	git fetch "$REMOTE" "$GITHUB_HEAD_REF:$GITHUB_HEAD_REF"
+	git config "branch.$GITHUB_HEAD_REF.remote" "$REMOVE"
+	git config "branch.$GITHUB_HEAD_REF.merge" "refs/heads/$GITHUB_HEAD_REF"
+	git checkout "$GITHUB_HEAD_REF"
+fi
 
 if [ "$(git status $POT_PATH --porcelain)" != "" ]; then
 	echo "🔼 Pushing to repository"
