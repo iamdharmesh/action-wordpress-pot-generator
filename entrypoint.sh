@@ -33,10 +33,12 @@ fi
 git config --global user.name "WordPress .pot File Generator"
 git config --global user.email "wpghactionbot@gmail.com"
 
+REPO_NAME="$GITHUB_REPOSITORY"
 if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
 	FORK=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.head.repo.fork)
 	MODIFY=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.maintainer_can_modify)
 	if [ "$FORK" == true ]; then
+		REPO_NAME=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.head.repo.full_name | cut -d "\"" -f 2)
 		REMOTE=$(cat "$GITHUB_EVENT_PATH" | jq .pull_request.head.repo.clone_url | cut -d "\"" -f 2)
 	else
 		REMOTE="origin"
@@ -68,7 +70,7 @@ if [ "$(git status $POT_PATH --porcelain)" != "" ]; then
 	echo "🔼 Pushing to repository"
 	git add "$POT_PATH"
 	git commit -m "🔄 Generated POT File"
-	git push "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY"
+	git push "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$REPO_NAME"
 else
 	echo "☑️ No changes are required to .pot file"
 fi
