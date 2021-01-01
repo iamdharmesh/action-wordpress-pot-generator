@@ -20,6 +20,12 @@ else
 	TEXT_DOMAIN=$INPUT_TEXT_DOMAIN
 fi
 
+if [ -z "$PAT_TOKEN" ]; then
+	TOKEN=$GITHUB_TOKEN
+else
+	TOKEN=$PAT_TOKEN
+fi
+
 POT_PATH="$DESTINATION_PATH/$TEXT_DOMAIN.pot"
 echo "✔️ DESTINATION_PATH: $DESTINATION_PATH"
 echo "✔️ SLUG : $SLUG"
@@ -70,7 +76,11 @@ if [ "$(git status $POT_PATH --porcelain)" != "" ]; then
 	echo "🔼 Pushing to repository"
 	git add "$POT_PATH"
 	git commit -m "🔄 Generated POT File"
-	git push "https://x-access-token:$GITHUB_TOKEN@github.com/$REPO_NAME"
+	if [ "$FORK" == true ]; then
+		git push "https://x-access-token:$TOKEN@github.com/$REPO_NAME"
+	else
+		git push "https://x-access-token:$GITHUB_TOKEN@github.com/$REPO_NAME"
+	fi	
 else
 	echo "☑️ No changes are required to .pot file"
 fi
