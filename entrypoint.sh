@@ -78,6 +78,7 @@ if [ "$(git status $POT_PATH --porcelain)" != "" ]; then
 	git commit -m "🔄 Generated POT File"
 	if [ "$FORK" == true ]; then
 		echo "debug: $REPO_NAME"
+		git config -l | grep 'http\..*\.extraheader' | cut -d= -f1 | xargs -L1 git config --unset-all
 		git config credential.https://github.com/.helper "! f() { echo username=x-access-token; echo password=$TOKEN; };f"
 		git push "https://x-access-token:$TOKEN@github.com/$REPO_NAME"
 	else
