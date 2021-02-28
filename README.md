@@ -33,7 +33,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: WordPress .pot File Generator
-      uses: iamdharmesh/action-wordpress-pot-generator@master
+      uses: iamdharmesh/action-wordpress-pot-generator@main
       with:
         destination_path: './languages'
         slug: 'SLUG_OF_PLUGIN_OR_THEME'
