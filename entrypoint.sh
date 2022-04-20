@@ -38,7 +38,7 @@ fi
 # Setup Git config and push .pot file to github repo
 git config --global user.name "WordPress .pot File Generator"
 git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-git config --global --add safe.directory /github/workspace
+git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
 REPO_NAME="$GITHUB_REPOSITORY"
 if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
